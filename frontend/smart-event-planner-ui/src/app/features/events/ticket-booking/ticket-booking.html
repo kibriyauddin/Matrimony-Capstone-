@@ -1,0 +1,27 @@
+<mat-card class="booking-card">
+  <h3>Book Ticket</h3>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Your Name</mat-label>
+      <input matInput formControlName="user_name">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Tickets</mat-label>
+      <input matInput type="number" formControlName="tickets">
+    </mat-form-field>
+
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit">
+        Confirm
+      </button>
+
+      <button mat-button type="button" (click)="close.emit()">
+        Cancel
+      </button>
+    </div>
+
+  </form>
+</mat-card>
