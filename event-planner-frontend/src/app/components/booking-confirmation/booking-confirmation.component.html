@@ -1,0 +1,69 @@
+<div class="container">
+  <mat-card *ngIf="booking" class="confirmation-card">
+    <div class="success-header">
+      <mat-icon class="success-icon">check_circle</mat-icon>
+      <h1>Booking Confirmed!</h1>
+      <p>Your tickets have been successfully booked</p>
+    </div>
+
+    <mat-card-content>
+      <div class="booking-details">
+        <h3>Event Details</h3>
+        <div class="detail-row">
+          <span class="label">Event Name:</span>
+          <span class="value">{{ booking.event_name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Venue:</span>
+          <span class="value">{{ booking.venue }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Date & Time:</span>
+          <span class="value">{{ booking.date_time | date:'full' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Category:</span>
+          <span class="value">{{ booking.category }}</span>
+        </div>
+      </div>
+
+      <div class="booking-details">
+        <h3>Booking Information</h3>
+        <div class="detail-row">
+          <span class="label">Booking ID:</span>
+          <span class="value">#{{ booking.id }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Tickets Booked:</span>
+          <span class="value">{{ booking.tickets_booked }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Total Amount:</span>
+          <span class="value highlight">${{ booking.total_price }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Booking Date:</span>
+          <span class="value">{{ booking.booking_time | date:'medium' }}</span>
+        </div>
+      </div>
+
+      <div class="qr-section">
+        <h3>Entry QR Code</h3>
+        <div class="qr-code">
+          <mat-icon>qr_code</mat-icon>
+          <p>{{ booking.qr_code }}</p>
+          <small>Show this code at the event entrance</small>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button (click)="printTicket()">
+        <mat-icon>print</mat-icon> Print Ticket
+      </button>
+      <button mat-raised-button color="primary" (click)="goToEvents()">
+        Browse More Events
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

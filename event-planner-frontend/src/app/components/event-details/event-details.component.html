@@ -1,0 +1,65 @@
+<div class="container">
+  <button mat-button (click)="goBack()" class="back-button">
+    <mat-icon>arrow_back</mat-icon> Back to Events
+  </button>
+
+  <mat-card *ngIf="event" class="event-details-card">
+    <mat-card-header>
+      <mat-card-title>{{ event.name }}</mat-card-title>
+      <mat-card-subtitle>{{ event.category }}</mat-card-subtitle>
+    </mat-card-header>
+    
+    <img *ngIf="event.image_url" mat-card-image [src]="event.image_url" [alt]="event.name">
+    
+    <mat-card-content>
+      <div class="detail-section">
+        <h3>Description</h3>
+        <p>{{ event.description || 'No description available' }}</p>
+      </div>
+
+      <div class="detail-section">
+        <h3>Event Details</h3>
+        <div class="details-grid">
+          <div class="detail-item">
+            <mat-icon>location_on</mat-icon>
+            <div>
+              <strong>Venue</strong>
+              <p>{{ event.venue }}</p>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <mat-icon>event</mat-icon>
+            <div>
+              <strong>Date & Time</strong>
+              <p>{{ event.date_time | date:'full' }}</p>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <mat-icon>attach_money</mat-icon>
+            <div>
+              <strong>Ticket Price</strong>
+              <p>${{ event.ticket_price }}</p>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <mat-icon>event_seat</mat-icon>
+            <div>
+              <strong>Available Seats</strong>
+              <p>{{ event.availableSeats }} / {{ event.capacity }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="bookTickets()" 
+              [disabled]="!event.availableSeats || event.availableSeats === 0">
+        {{ event.availableSeats && event.availableSeats > 0 ? 'Book Tickets' : 'Sold Out' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

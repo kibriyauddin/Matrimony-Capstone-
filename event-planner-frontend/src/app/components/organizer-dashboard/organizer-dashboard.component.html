@@ -1,0 +1,232 @@
+<div class="dashboard-wrapper">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1>Organizer Dashboard</h1>
+        <p class="subtitle">Manage your events and track performance</p>
+      </div>
+      <div class="header-actions">
+        <button mat-button (click)="goToEvents()" class="btn-secondary">
+          <mat-icon>event</mat-icon> Browse Events
+        </button>
+        <button mat-raised-button color="primary" (click)="toggleCreateForm()" class="btn-create">
+          <mat-icon>{{ showCreateForm ? 'close' : 'add' }}</mat-icon>
+          {{ showCreateForm ? 'Cancel' : 'Create Event' }}
+        </button>
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="user-menu">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <div class="user-info">
+            <p class="user-name">{{ currentUser?.full_name }}</p>
+            <p class="user-email">{{ currentUser?.email }}</p>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            Logout
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-container" *ngIf="!showCreateForm">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card revenue">
+        <div class="stat-icon">
+          <mat-icon>attach_money</mat-icon>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Total Revenue</p>
+          <h2 class="stat-value">${{ totalRevenue | number:'1.0-0' }}</h2>
+        </div>
+      </div>
+
+      <div class="stat-card attendees">
+        <div class="stat-icon">
+          <mat-icon>people</mat-icon>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Total Attendees</p>
+          <h2 class="stat-value">{{ totalAttendees }}</h2>
+        </div>
+      </div>
+
+      <div class="stat-card events">
+        <div class="stat-icon">
+          <mat-icon>event</mat-icon>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Active Events</p>
+          <h2 class="stat-value">{{ activeEventsCount }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- Your Events Table -->
+    <div class="events-section">
+      <h2 class="section-title">Your Events</h2>
+      
+      <div class="events-table-container" *ngIf="events.length > 0">
+        <table class="events-table">
+          <thead>
+            <tr>
+              <th>EVENT NAME</th>
+              <th>DATE</th>
+              <th>SOLD</th>
+              <th>REVENUE</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of events" [class.cancelled-row]="event.status === 'cancelled'">
+              <td>
+                <div class="event-name-cell">
+                  <strong>{{ event.name }}</strong>
+                  <span class="venue-text">{{ event.venue }}</span>
+                </div>
+              </td>
+              <td>{{ event.date_time | date:'M/d/yyyy' }}</td>
+              <td>
+                <div class="progress-cell">
+                  <span class="sold-text">{{ event.totalTicketsSold || 0 }} / {{ event.capacity }}</span>
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="getProgressPercentage(event)"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <strong class="revenue-text">${{ (event.totalTicketsSold || 0) * event.ticket_price | number:'1.0-0' }}</strong>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button mat-icon-button color="primary" (click)="viewAttendees(event)" matTooltip="View Attendees">
+                    <mat-icon>people</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="editEvent(event)" *ngIf="event.status === 'active'" matTooltip="Edit">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="cancelEvent(event.id)" *ngIf="event.status === 'active'" matTooltip="Cancel">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="events.length === 0" class="empty-state">
+        <mat-icon>event_busy</mat-icon>
+        <h3>No Events Yet</h3>
+        <p>Create your first event to get started!</p>
+        <button mat-raised-button color="primary" (click)="toggleCreateForm()">
+          <mat-icon>add</mat-icon> Create Event
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create/Edit Form -->
+  <div class="form-container" *ngIf="showCreateForm">
+    <div class="form-card">
+      <h2>{{ editingEventId ? 'Edit Event' : 'Create New Event' }}</h2>
+      
+      <form class="event-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Event Name *</mat-label>
+            <input matInput [(ngModel)]="eventForm.name" name="name" required>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput [(ngModel)]="eventForm.description" name="description" rows="3"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Venue *</mat-label>
+            <input matInput [(ngModel)]="eventForm.venue" name="venue" required>
+          </mat-form-field>
+
+          <div class="date-field half-width">
+            <label class="date-label">Date & Time *</label>
+            <input type="datetime-local" [(ngModel)]="eventForm.date_time" name="date_time" required class="date-input">
+          </div>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Category</mat-label>
+            <mat-select [(ngModel)]="eventForm.category" name="category">
+              <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Capacity</mat-label>
+            <input matInput type="number" [(ngModel)]="eventForm.capacity" name="capacity" min="1">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Ticket Price ($)</mat-label>
+            <input matInput type="number" [(ngModel)]="eventForm.ticket_price" name="ticket_price" min="0">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Image URL (optional)</mat-label>
+            <input matInput [(ngModel)]="eventForm.image_url" name="image_url">
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button (click)="toggleCreateForm()" type="button">Cancel</button>
+          <button mat-raised-button color="primary" (click)="editingEventId ? updateEvent() : createEvent()" type="button">
+            {{ editingEventId ? 'Update Event' : 'Create Event' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Attendees Modal -->
+  <div *ngIf="showAttendees" class="modal-overlay" (click)="closeAttendees()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Attendees - {{ selectedEventName }}</h2>
+        <button mat-icon-button (click)="closeAttendees()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <table class="attendees-table" *ngIf="selectedEventAttendees.length > 0">
+          <thead>
+            <tr>
+              <th>NAME</th>
+              <th>EMAIL</th>
+              <th>TICKETS</th>
+              <th>AMOUNT</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let attendee of selectedEventAttendees">
+              <td>{{ attendee.full_name }}</td>
+              <td>{{ attendee.email }}</td>
+              <td>{{ attendee.tickets_booked }}</td>
+              <td>${{ attendee.total_price }}</td>
+              <td><span class="status-badge">{{ attendee.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="selectedEventAttendees.length === 0" class="empty-state-small">
+          <mat-icon>people_outline</mat-icon>
+          <p>No attendees yet for this event.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

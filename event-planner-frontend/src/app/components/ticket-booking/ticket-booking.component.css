@@ -1,0 +1,110 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.booking-card {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.25);
+}
+
+.booking-card mat-card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 32px;
+  color: white;
+  border-radius: 16px 16px 0 0;
+  margin: -16px -16px 0 -16px;
+}
+
+.booking-card mat-card-title {
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.booking-card mat-card-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+}
+
+.event-summary {
+  background: #f7fafc;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.event-summary h3 {
+  margin: 0 0 16px 0;
+  color: #2d3748;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  color: #4a5568;
+  font-size: 15px;
+}
+
+.summary-item mat-icon {
+  color: #667eea;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.total-section {
+  background: #edf2f7;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 24px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  color: #4a5568;
+  font-size: 15px;
+}
+
+.total-row.final {
+  border-top: 2px solid #cbd5e0;
+  margin-top: 12px;
+  padding-top: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #667eea;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 24px;
+  background: #f7fafc;
+}
+
+mat-card-actions button {
+  height: 44px;
+  padding: 0 24px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 8px;
+}

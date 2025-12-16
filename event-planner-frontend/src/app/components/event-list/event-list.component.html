@@ -1,0 +1,56 @@
+<mat-toolbar color="primary">
+  <span>Event Planner</span>
+  <span class="spacer"></span>
+  <span *ngIf="currentUser">Welcome, {{ currentUser.full_name }}</span>
+  <button mat-button *ngIf="currentUser?.role === 'organizer'" (click)="goToDashboard()">
+    <mat-icon>dashboard</mat-icon> Dashboard
+  </button>
+  <button mat-button (click)="logout()">
+    <mat-icon>logout</mat-icon> Logout
+  </button>
+</mat-toolbar>
+
+<div class="container">
+  <h1>Browse Events</h1>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select [(ngModel)]="selectedCategory" (ngModelChange)="applyFilters()">
+        <mat-option value="">All Categories</mat-option>
+        <mat-option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Search Venue</mat-label>
+      <input matInput [(ngModel)]="searchVenue" (ngModelChange)="applyFilters()">
+    </mat-form-field>
+  </div>
+
+  <div class="events-grid">
+    <mat-card *ngFor="let event of filteredEvents" class="event-card">
+      <mat-card-header>
+        <mat-card-title>{{ event.name }}</mat-card-title>
+        <mat-card-subtitle>{{ event.category }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Venue:</strong> {{ event.venue }}</p>
+        <p><strong>Date:</strong> {{ event.date_time | date:'medium' }}</p>
+        <p><strong>Price:</strong> ${{ event.ticket_price }}</p>
+        <p><strong>Available Seats:</strong> {{ event.availableSeats }} / {{ event.capacity }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="viewEventDetails(event.id)">
+          View Details
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div *ngIf="filteredEvents.length === 0" class="no-events">
+    <p>No events found matching your criteria.</p>
+  </div>
+</div>
