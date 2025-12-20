@@ -2,7 +2,11 @@
   <span>Event Planner</span>
   <span class="spacer"></span>
   <span *ngIf="currentUser">Welcome, {{ currentUser.full_name }}</span>
-  <button mat-button *ngIf="currentUser?.role === 'organizer'" (click)="goToDashboard()">
+  <button
+    mat-button
+    *ngIf="currentUser?.role === 'organizer'"
+    (click)="goToDashboard()"
+  >
     <mat-icon>dashboard</mat-icon> Dashboard
   </button>
   <button mat-button (click)="logout()">
@@ -16,7 +20,10 @@
   <div class="filters">
     <mat-form-field appearance="outline">
       <mat-label>Category</mat-label>
-      <mat-select [(ngModel)]="selectedCategory" (ngModelChange)="applyFilters()">
+      <mat-select
+        [(ngModel)]="selectedCategory"
+        (ngModelChange)="applyFilters()"
+      >
         <mat-option value="">All Categories</mat-option>
         <mat-option *ngFor="let category of categories" [value]="category">
           {{ category }}
@@ -26,7 +33,11 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Search Venue</mat-label>
-      <input matInput [(ngModel)]="searchVenue" (ngModelChange)="applyFilters()">
+      <input
+        matInput
+        [(ngModel)]="searchVenue"
+        (ngModelChange)="applyFilters()"
+      />
     </mat-form-field>
   </div>
 
@@ -38,12 +49,27 @@
       </mat-card-header>
       <mat-card-content>
         <p><strong>Venue:</strong> {{ event.venue }}</p>
-        <p><strong>Date:</strong> {{ event.date_time | date:'medium' }}</p>
+        <p><strong>Date:</strong> {{ event.date_time | date : "medium" }}</p>
         <p><strong>Price:</strong> ${{ event.ticket_price }}</p>
-        <p><strong>Available Seats:</strong> {{ event.availableSeats }} / {{ event.capacity }}</p>
+        <p>
+          <strong>Available Seats:</strong> {{ event.availableSeats }} /
+          {{ event.capacity }}
+        </p>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="viewEventDetails(event.id)">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="viewEventDetails(event.id)"
+          *ngIf="currentUser?.role !== 'organizer'"
+        >
+          Book Tickets
+        </button>
+        <button
+          mat-outlined-button
+          (click)="viewEventDetails(event.id)"
+          *ngIf="currentUser?.role === 'organizer'"
+        >
           View Details
         </button>
       </mat-card-actions>

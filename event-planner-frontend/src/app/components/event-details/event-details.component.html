@@ -8,13 +8,18 @@
       <mat-card-title>{{ event.name }}</mat-card-title>
       <mat-card-subtitle>{{ event.category }}</mat-card-subtitle>
     </mat-card-header>
-    
-    <img *ngIf="event.image_url" mat-card-image [src]="event.image_url" [alt]="event.name">
-    
+
+    <img
+      *ngIf="event.image_url"
+      mat-card-image
+      [src]="event.image_url"
+      [alt]="event.name"
+    />
+
     <mat-card-content>
       <div class="detail-section">
         <h3>Description</h3>
-        <p>{{ event.description || 'No description available' }}</p>
+        <p>{{ event.description || "No description available" }}</p>
       </div>
 
       <div class="detail-section">
@@ -32,7 +37,7 @@
             <mat-icon>event</mat-icon>
             <div>
               <strong>Date & Time</strong>
-              <p>{{ event.date_time | date:'full' }}</p>
+              <p>{{ event.date_time | date : "full" }}</p>
             </div>
           </div>
 
@@ -56,9 +61,21 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="bookTickets()" 
-              [disabled]="!event.availableSeats || event.availableSeats === 0">
-        {{ event.availableSeats && event.availableSeats > 0 ? 'Book Tickets' : 'Sold Out' }}
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="bookTickets()"
+        [disabled]="
+          !event.availableSeats || event.availableSeats === 0 || isOrganizer()
+        "
+      >
+        {{
+          event.availableSeats && event.availableSeats > 0 && !isOrganizer()
+            ? "Book Tickets"
+            : isOrganizer()
+            ? "Organizers Cannot Book"
+            : "Sold Out"
+        }}
       </button>
     </mat-card-actions>
   </mat-card>

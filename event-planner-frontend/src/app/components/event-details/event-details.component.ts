@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { EventService, Event } from '../../services/event.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-event-details',
@@ -20,12 +21,18 @@ export class EventDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private eventService: EventService
+    private eventService: EventService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadEventDetails();
+  }
+
+  isOrganizer(): boolean {
+    const user = this.authService.getCurrentUser();
+    return user?.role === 'organizer';
   }
 
   loadEventDetails() {
