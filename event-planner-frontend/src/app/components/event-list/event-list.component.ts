@@ -9,6 +9,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { EventService, Event } from '../../services/event.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -25,6 +27,8 @@ import { AuthService } from '../../services/auth.service';
     MatSelectModule,
     MatToolbarModule,
     MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   templateUrl: './event-list.component.html',
   styleUrl: './event-list.component.css',
@@ -41,6 +45,7 @@ export class EventListComponent implements OnInit {
     'Other',
   ];
   selectedCategory = '';
+  selectedDate: Date | null = null;
   searchVenue = '';
   currentUser: any;
 
@@ -72,10 +77,19 @@ export class EventListComponent implements OnInit {
     this.filteredEvents = this.events.filter((event) => {
       const categoryMatch =
         !this.selectedCategory || event.category === this.selectedCategory;
+
       const venueMatch =
         !this.searchVenue ||
         event.venue.toLowerCase().includes(this.searchVenue.toLowerCase());
-      return categoryMatch && venueMatch;
+
+      let dateMatch = true;
+      if (this.selectedDate) {
+        const eventDate = new Date(event.date_time);
+        dateMatch =
+          eventDate.toDateString() === this.selectedDate.toDateString();
+      }
+
+      return categoryMatch && venueMatch && dateMatch;
     });
   }
 

@@ -4,12 +4,19 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { QRCodeModule } from 'angularx-qrcode';
 import { BookingService, Booking } from '../../services/booking.service';
 
 @Component({
   selector: 'app-booking-confirmation',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    QRCodeModule,
+  ],
   templateUrl: './booking-confirmation.component.html',
   styleUrl: './booking-confirmation.component.css',
 })

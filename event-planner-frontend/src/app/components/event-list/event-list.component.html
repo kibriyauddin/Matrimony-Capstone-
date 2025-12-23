@@ -7,10 +7,12 @@
     *ngIf="currentUser?.role === 'organizer'"
     (click)="goToDashboard()"
   >
-    <mat-icon>dashboard</mat-icon> Dashboard
+    <mat-icon>dashboard</mat-icon>
+    Dashboard
   </button>
   <button mat-button (click)="logout()">
-    <mat-icon>logout</mat-icon> Logout
+    <mat-icon>logout</mat-icon>
+    Logout
   </button>
 </mat-toolbar>
 
@@ -20,15 +22,25 @@
   <div class="filters">
     <mat-form-field appearance="outline">
       <mat-label>Category</mat-label>
-      <mat-select
-        [(ngModel)]="selectedCategory"
-        (ngModelChange)="applyFilters()"
-      >
+      <mat-select [(ngModel)]="selectedCategory" (ngModelChange)="applyFilters()">
         <mat-option value="">All Categories</mat-option>
         <mat-option *ngFor="let category of categories" [value]="category">
           {{ category }}
         </mat-option>
       </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Filter by Date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker"
+        [(ngModel)]="selectedDate"
+        (dateChange)="applyFilters()"
+        name="filterDate"
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -49,11 +61,11 @@
       </mat-card-header>
       <mat-card-content>
         <p><strong>Venue:</strong> {{ event.venue }}</p>
-        <p><strong>Date:</strong> {{ event.date_time | date : "medium" }}</p>
+        <p><strong>Date:</strong> {{ event.date_time | date: 'medium' }}</p>
         <p><strong>Price:</strong> ${{ event.ticket_price }}</p>
         <p>
-          <strong>Available Seats:</strong> {{ event.availableSeats }} /
-          {{ event.capacity }}
+          <strong>Available Seats:</strong>
+          {{ event.availableSeats }} / {{ event.capacity }}
         </p>
       </mat-card-content>
       <mat-card-actions>

@@ -18,8 +18,8 @@
           <span class="value">{{ booking.venue }}</span>
         </div>
         <div class="detail-row">
-          <span class="label">Date & Time:</span>
-          <span class="value">{{ booking.date_time | date:'full' }}</span>
+          <span class="label">Date &amp; Time:</span>
+          <span class="value">{{ booking.date_time | date: 'full' }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Category:</span>
@@ -43,23 +43,37 @@
         </div>
         <div class="detail-row">
           <span class="label">Booking Date:</span>
-          <span class="value">{{ booking.booking_time | date:'medium' }}</span>
+          <span class="value">{{ booking.booking_time | date: 'medium' }}</span>
         </div>
       </div>
 
       <div class="qr-section">
         <h3>Entry QR Code</h3>
-        <div class="qr-code">
-          <mat-icon>qr_code</mat-icon>
-          <p>{{ booking.qr_code }}</p>
+
+        <!-- REAL QR IMAGE WHEN qr_code EXISTS -->
+        <div class="qr-code" *ngIf="booking?.qr_code">
+          <qrcode
+            [qrdata]="booking.qr_code || ''"
+            [width]="180"
+            [errorCorrectionLevel]="'M'">
+          </qrcode>
+
+          <p class="qr-code-text">{{ booking.qr_code }}</p>
           <small>Show this code at the event entrance</small>
+        </div>
+
+        <!-- Fallback if no qr_code -->
+        <div class="qr-code" *ngIf="!booking?.qr_code">
+          <mat-icon>qr_code</mat-icon>
+          <p>No QR code available.</p>
         </div>
       </div>
     </mat-card-content>
 
     <mat-card-actions>
       <button mat-button (click)="printTicket()">
-        <mat-icon>print</mat-icon> Print Ticket
+        <mat-icon>print</mat-icon>
+        Print Ticket
       </button>
       <button mat-raised-button color="primary" (click)="goToEvents()">
         Browse More Events
