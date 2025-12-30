@@ -1,0 +1,156 @@
+<div class="booking-details-container" *ngIf="!isLoading && booking">
+  <!-- Back Button -->
+  <div class="back-navigation">
+    <button mat-button routerLink="/bookings" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+      Back to My Bookings
+    </button>
+  </div>
+
+  <!-- Ticket Card -->
+  <mat-card class="ticket-card">
+    <mat-card-header class="ticket-header">
+      <div class="ticket-title">
+        <mat-icon class="ticket-icon">confirmation_number</mat-icon>
+        <div>
+          <h2>Event Ticket</h2>
+          <p class="booking-number">Booking #{{ booking.id }}</p>
+        </div>
+      </div>
+      <div class="ticket-status">
+        <mat-chip [class]="getStatusClass(booking.status)">
+          {{ booking.status | titlecase }}
+        </mat-chip>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content class="ticket-content">
+      <!-- Event Information -->
+      <div class="event-section">
+        <h3 class="section-title">Event Details</h3>
+        <div class="event-info">
+          <h4 class="event-name">{{ booking.event_name }}</h4>
+          
+          <div class="event-details">
+            <div class="detail-row">
+              <mat-icon>schedule</mat-icon>
+              <div>
+                <strong>Date & Time:</strong><br>
+                {{ formatEventDate(booking.event_date!) }}<br>
+                {{ formatEventTime(booking.event_date!) }}
+              </div>
+            </div>
+            
+            <div class="detail-row">
+              <mat-icon>location_on</mat-icon>
+              <div>
+                <strong>Venue:</strong><br>
+                {{ booking.venue }}
+              </div>
+            </div>
+            
+            <div class="detail-row">
+              <mat-icon>confirmation_number</mat-icon>
+              <div>
+                <strong>Tickets:</strong><br>
+                {{ booking.tickets_booked }} {{ booking.tickets_booked === 1 ? 'ticket' : 'tickets' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- QR Code Section -->
+      <div class="qr-section">
+        <h3 class="section-title">Entry QR Code</h3>
+        <div class="qr-container">
+          <div class="qr-code">
+            <img [src]="qrCodeDataUrl" [alt]="'QR Code for booking ' + booking.id" *ngIf="qrCodeDataUrl">
+            <div *ngIf="!qrCodeDataUrl" class="qr-loading">Generating QR Code...</div>
+          </div>
+          <div class="qr-instructions">
+            <p><strong>Show this QR code at the event entrance</strong></p>
+            <p>Make sure your screen brightness is high for easy scanning</p>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Booking Information -->
+      <div class="booking-section">
+        <h3 class="section-title">Booking Information</h3>
+        <div class="booking-info">
+          <div class="info-row">
+            <span class="info-label">Booking Date:</span>
+            <span class="info-value">{{ formatBookingDate(booking.booking_time) }}</span>
+          </div>
+          
+          <div class="info-row">
+            <span class="info-label">Total Amount:</span>
+            <span class="info-value price">₹{{ parseNumber(booking.total_price) | number:'1.0-0' }}</span>
+          </div>
+          
+          <div class="info-row">
+            <span class="info-label">Status:</span>
+            <span class="info-value">
+              <mat-chip [class]="getStatusClass(booking.status)">
+                {{ booking.status | titlecase }}
+              </mat-chip>
+            </span>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions class="ticket-actions">
+      <button mat-raised-button color="primary" (click)="downloadTicket()" class="action-btn">
+        <mat-icon>download</mat-icon>
+        Download QR Code
+      </button>
+      
+      <button mat-stroked-button (click)="printTicket()" class="action-btn">
+        <mat-icon>print</mat-icon>
+        Print Ticket
+      </button>
+      
+      <button mat-button [routerLink]="['/events', booking.event_id]" class="action-btn">
+        <mat-icon>event</mat-icon>
+        View Event
+      </button>
+
+      <button mat-stroked-button color="warn" (click)="cancelBooking()" 
+              *ngIf="canCancelBooking()" class="action-btn cancel-btn">
+        <mat-icon>cancel</mat-icon>
+        Cancel Booking
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Important Notes -->
+  <mat-card class="notes-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>info</mat-icon>
+        Important Information
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ul class="notes-list">
+        <li>Please arrive at the venue at least 15 minutes before the event starts</li>
+        <li>Bring a valid ID along with this ticket</li>
+        <li>This QR code is unique to your booking - do not share it</li>
+        <li>Screenshots of this ticket are acceptable for entry</li>
+        <li>Contact the organizer if you have any questions about the event</li>
+      </ul>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Loading ticket details...</p>
+</div>

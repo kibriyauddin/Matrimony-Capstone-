@@ -1,0 +1,199 @@
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="dashboard-title">Organizer Dashboard</h1>
+        <p class="dashboard-subtitle">Manage your events and track performance</p>
+      </div>
+      
+      <div class="header-actions">
+        <button mat-stroked-button routerLink="/events" class="browse-events-btn">
+          <mat-icon>visibility</mat-icon>
+          Browse Events
+        </button>
+        
+        <button mat-raised-button color="accent" routerLink="/organizer/create-event" class="create-event-btn">
+          <mat-icon>add</mat-icon>
+          Create Event
+        </button>
+        
+        <button mat-icon-button [matMenuTriggerFor]="settingsMenu" class="settings-btn">
+          <mat-icon>settings</mat-icon>
+        </button>
+        
+        <mat-menu #settingsMenu="matMenu">
+          <button mat-menu-item (click)="refreshDashboard()">
+            <mat-icon>refresh</mat-icon>
+            <span>Refresh</span>
+          </button>
+          <button mat-menu-item routerLink="/organizer/email-test">
+            <mat-icon>email</mat-icon>
+            <span>Test Email</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading dashboard...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!isLoading" class="dashboard-content">
+    
+    <!-- Statistics Cards -->
+    <div class="stats-section">
+      <div class="stats-grid">
+        
+        <!-- Total Revenue Card -->
+        <mat-card class="stat-card revenue-card">
+          <mat-card-content>
+            <div class="stat-icon">
+              <mat-icon>attach_money</mat-icon>
+            </div>
+            <div class="stat-details">
+              <p class="stat-label">Total Revenue</p>
+              <h2 class="stat-value">₹{{ totalRevenue | number:'1.0-0' }}</h2>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Total Attendees Card -->
+        <mat-card class="stat-card attendees-card">
+          <mat-card-content>
+            <div class="stat-icon">
+              <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-details">
+              <p class="stat-label">Total Attendees</p>
+              <h2 class="stat-value">{{ totalTicketsSold.toString().padStart(3, '0') }}</h2>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Active Events Card -->
+        <mat-card class="stat-card events-card">
+          <mat-card-content>
+            <div class="stat-icon">
+              <mat-icon>event</mat-icon>
+            </div>
+            <div class="stat-details">
+              <p class="stat-label">Active Events</p>
+              <h2 class="stat-value">{{ upcomingEvents }}</h2>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </div>
+
+    <!-- Events Table Section -->
+    <div class="events-section">
+      <mat-card class="events-table-card">
+        <mat-card-header>
+          <mat-card-title>Your Events</mat-card-title>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <!-- Events Table -->
+          <div class="table-container" *ngIf="events.length > 0">
+            <table mat-table [dataSource]="events" class="events-table">
+              
+              <!-- Event Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef class="table-header">EVENT NAME</th>
+                <td mat-cell *matCellDef="let event" class="event-name-cell">
+                  <div class="event-name-container">
+                    <h4 class="event-name">{{ event.name }}</h4>
+                    <p class="event-location">{{ event.venue }}</p>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Date Column -->
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef class="table-header">DATE</th>
+                <td mat-cell *matCellDef="let event" class="date-cell">
+                  {{ formatEventDate(event.date_time) }}
+                </td>
+              </ng-container>
+
+              <!-- Sold Column -->
+              <ng-container matColumnDef="sold">
+                <th mat-header-cell *matHeaderCellDef class="table-header">SOLD</th>
+                <td mat-cell *matCellDef="let event" class="sold-cell">
+                  <div class="progress-container">
+                    <div class="progress-text">{{ event.tickets_sold || 0 }} / {{ event.capacity }}</div>
+                    <mat-progress-bar 
+                      mode="determinate" 
+                      [value]="getProgressPercentage(event)"
+                      class="progress-bar">
+                    </mat-progress-bar>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Revenue Column -->
+              <ng-container matColumnDef="revenue">
+                <th mat-header-cell *matHeaderCellDef class="table-header">REVENUE</th>
+                <td mat-cell *matCellDef="let event" class="revenue-cell">
+                  <span class="revenue-amount">₹{{ getEventRevenue(event) | number:'1.0-0' }}</span>
+                </td>
+              </ng-container>
+
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="table-header">ACTIONS</th>
+                <td mat-cell *matCellDef="let event" class="actions-cell">
+                  <div class="action-buttons">
+                    <button mat-icon-button 
+                            (click)="viewAttendees(event.id)"
+                            matTooltip="View Attendees"
+                            class="action-btn attendees-btn">
+                      <mat-icon>people</mat-icon>
+                    </button>
+                    
+                    <button mat-icon-button 
+                            [routerLink]="['/organizer/edit-event', event.id]"
+                            matTooltip="Edit Event"
+                            class="action-btn edit-btn">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    
+                    <button mat-icon-button 
+                            (click)="deleteEvent(event)"
+                            matTooltip="Delete Event"
+                            class="action-btn delete-btn">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="event-row"></tr>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="events.length === 0" class="empty-state">
+            <div class="empty-state-content">
+              <mat-icon class="empty-icon">event_note</mat-icon>
+              <h3>No Events Yet</h3>
+              <p>Create your first event to start managing your events and tracking performance.</p>
+              <button mat-raised-button color="primary" routerLink="/organizer/create-event" class="create-first-event-btn">
+                <mat-icon>add</mat-icon>
+                Create Your First Event
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,226 @@
+<div class="home-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="60"></mat-spinner>
+    <p>Loading your dashboard...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h3>Oops! Something went wrong</h3>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="retryLoad()">
+      <mat-icon>refresh</mat-icon>
+      Try Again
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && !error">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">
+            Welcome to <span class="gradient-text">Smart Event Planner</span>
+          </h1>
+          <p class="hero-subtitle">
+            Discover amazing events, book tickets instantly, and create unforgettable experiences
+          </p>
+          
+          <div class="hero-stats">
+            <div class="stat-item">
+              <h3>{{ totalEvents }}</h3>
+              <p>Active Events</p>
+            </div>
+            <div class="stat-item">
+              <h3>{{ totalBookings }}</h3>
+              <p>Happy Attendees</p>
+            </div>
+            <div class="stat-item">
+              <h3>{{ totalOrganizers }}</h3>
+              <p>Event Organizers</p>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <button mat-raised-button color="primary" routerLink="/events" class="explore-btn">
+              <mat-icon>explore</mat-icon>
+              Explore Events
+            </button>
+            <button mat-stroked-button routerLink="/organizer/dashboard" *ngIf="canAccessOrganizer()" class="dashboard-btn">
+              <mat-icon>dashboard</mat-icon>
+              My Dashboard
+            </button>
+          </div>
+        </div>
+        
+        <div class="hero-image">
+          <div class="hero-card">
+            <div class="card-header">
+              <mat-icon class="hero-icon">rocket_launch</mat-icon>
+              <div class="sparkle-effect">✨</div>
+            </div>
+            <h3>Start Your Journey</h3>
+            <p>Join thousands of event enthusiasts and discover amazing experiences</p>
+            <div class="card-stats">
+              <div class="mini-stat">
+                <span class="number">500+</span>
+                <span class="label">Events</span>
+              </div>
+              <div class="mini-stat">
+                <span class="number">10K+</span>
+                <span class="label">Users</span>
+              </div>
+            </div>
+            <button mat-raised-button color="accent" routerLink="/events" class="card-action-btn">
+              <mat-icon>explore</mat-icon>
+              Get Started
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="section-header">
+      <h2>Why Choose Smart Event Planner?</h2>
+      <p>Everything you need to discover and manage events</p>
+    </div>
+    
+    <div class="features-grid">
+      <mat-card class="feature-card">
+        <mat-card-content>
+          <div class="feature-icon">
+            <mat-icon>search</mat-icon>
+          </div>
+          <h3>Discover Events</h3>
+          <p>Find events that match your interests with our smart search and filtering system</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card">
+        <mat-card-content>
+          <div class="feature-icon">
+            <mat-icon>confirmation_number</mat-icon>
+          </div>
+          <h3>Instant Booking</h3>
+          <p>Book tickets instantly with secure payment and get QR codes for easy entry</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card">
+        <mat-card-content>
+          <div class="feature-icon">
+            <mat-icon>event</mat-icon>
+          </div>
+          <h3>Create Events</h3>
+          <p>Organize your own events with our powerful event management tools</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card">
+        <mat-card-content>
+          <div class="feature-icon">
+            <mat-icon>analytics</mat-icon>
+          </div>
+          <h3>Track Performance</h3>
+          <p>Get detailed analytics and insights about your events and bookings</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </section>
+
+  <!-- Quick Actions Section -->
+  <section class="quick-actions-section" *ngIf="currentUser">
+    <div class="section-header">
+      <h2>Quick Actions</h2>
+      <p>Get started with these popular actions</p>
+    </div>
+    
+    <div class="actions-grid">
+      <!-- For Attendees -->
+      <div *ngIf="isAttendee()" class="action-cards">
+        <mat-card class="action-card" routerLink="/events">
+          <mat-card-content>
+            <mat-icon>explore</mat-icon>
+            <h3>Browse Events</h3>
+            <p>Discover upcoming events</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="action-card" routerLink="/bookings">
+          <mat-card-content>
+            <mat-icon>confirmation_number</mat-icon>
+            <h3>My Bookings</h3>
+            <p>View your ticket bookings</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- For Organizers -->
+      <div *ngIf="canAccessOrganizer()" class="action-cards">
+        <mat-card class="action-card" routerLink="/organizer/create-event">
+          <mat-card-content>
+            <mat-icon>add_circle</mat-icon>
+            <h3>Create Event</h3>
+            <p>Start organizing your event</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="action-card" routerLink="/organizer/dashboard">
+          <mat-card-content>
+            <mat-icon>dashboard</mat-icon>
+            <h3>Dashboard</h3>
+            <p>Manage your events</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="action-card" routerLink="/events">
+          <mat-card-content>
+            <mat-icon>visibility</mat-icon>
+            <h3>Browse Events</h3>
+            <p>See all events</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Events Section -->
+  <section class="recent-events-section" *ngIf="recentEvents.length > 0">
+    <div class="section-header">
+      <h2>Featured Events</h2>
+      <p>Don't miss these popular events</p>
+    </div>
+    
+    <div class="events-carousel">
+      <mat-card *ngFor="let event of recentEvents" class="event-preview-card" [routerLink]="['/events', event.id]">
+        <div class="event-image" [style.background-image]="event.image_url ? 'url(' + event.image_url + ')' : 'none'">
+          <div class="event-overlay">
+            <mat-chip class="category-chip">{{ event.category }}</mat-chip>
+          </div>
+        </div>
+        <mat-card-content>
+          <h3>{{ event.name }}</h3>
+          <div class="event-details">
+            <div class="detail-item">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ formatEventDate(event.date_time) }}</span>
+            </div>
+            <div class="detail-item">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ event.venue }}</span>
+            </div>
+            <div class="detail-item price">
+              <mat-icon>currency_rupee</mat-icon>
+              <span>{{ event.ticket_price === 0 ? 'FREE' : ('₹' + event.ticket_price) }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </section>
+</div>

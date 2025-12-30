@@ -1,0 +1,464 @@
+.event-details-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.back-navigation {
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.event-header-card {
+  margin-bottom: 24px;
+}
+
+.event-header-content {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+}
+
+.event-image-section {
+  flex: 0 0 300px;
+}
+
+.event-image {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.event-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder-image {
+  color: #999;
+  font-size: 48px;
+}
+
+.placeholder-image mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.event-info-section {
+  flex: 1;
+}
+
+.event-category {
+  margin-bottom: 12px;
+}
+
+.event-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
+  line-height: 1.2;
+}
+
+.event-meta {
+  margin-bottom: 24px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.meta-item mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.pricing-availability {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.price {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.price-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.price-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.price-value.free {
+  color: #1976d2;
+}
+
+.availability {
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+}
+
+.availability.available {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
+
+.availability.low-availability {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.availability.sold-out {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.event-description-card {
+  margin-bottom: 24px;
+}
+
+.event-description {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.booking-card {
+  margin-bottom: 24px;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tickets-field {
+  max-width: 200px;
+}
+
+.booking-summary {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.summary-row.total {
+  font-weight: 600;
+  font-size: 18px;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+.booking-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.book-btn {
+  min-width: 150px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.login-btn {
+  height: 48px;
+  font-size: 16px;
+}
+
+.loading-spinner {
+  margin-right: 8px;
+}
+
+.sold-out-card {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.sold-out-content {
+  padding: 40px 20px;
+}
+
+.sold-out-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #999;
+  margin-bottom: 16px;
+}
+
+.sold-out-content h3 {
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.sold-out-content p {
+  color: #999;
+}
+
+/* Organizer Info Card */
+.organizer-info-card {
+  margin-bottom: 24px;
+  border: 2px solid #e3f2fd;
+  background: linear-gradient(135deg, #f8faff 0%, #e8f4fd 100%);
+}
+
+.organizer-info-content {
+  text-align: center;
+  padding: 32px 20px;
+}
+
+.organizer-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #1976d2;
+  margin-bottom: 16px;
+}
+
+.organizer-info-content h3 {
+  color: #1976d2;
+  margin-bottom: 12px;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.organizer-info-content p {
+  color: #555;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.organizer-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1976d2;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-container p {
+  margin-top: 16px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .event-details-container {
+    padding: 16px;
+  }
+  
+  .event-header-content {
+    flex-direction: column;
+    padding: 16px;
+  }
+  
+  .event-image-section {
+    flex: none;
+  }
+  
+  .event-title {
+    font-size: 1.5rem;
+  }
+  
+  .pricing-availability {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  
+  .booking-actions {
+    flex-direction: column;
+  }
+  
+  .book-btn,
+  .login-btn {
+    width: 100%;
+  }
+  
+  .organizer-stats {
+    gap: 20px;
+  }
+  
+  .organizer-info-content {
+    padding: 24px 16px;
+  }
+}
+/* Sold Out Card */
+.sold-out-card {
+  margin: 24px 0;
+  border-radius: 16px;
+  border: 2px solid #e74c3c;
+  background: linear-gradient(135deg, #ffeaea 0%, #ffebee 100%);
+}
+
+.sold-out-content {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.sold-out-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px auto;
+  animation: pulse 2s infinite;
+}
+
+.sold-out-icon mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: white;
+}
+
+.sold-out-content h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #c0392b;
+  margin: 0 0 16px 0;
+}
+
+.sold-out-content p {
+  color: #7f1d1d;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0 0 32px 0;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sold-out-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 32px 0;
+  padding: 24px;
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: 12px;
+}
+
+.sold-out-stats .stat-item {
+  text-align: center;
+}
+
+.sold-out-stats .stat-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #7f1d1d;
+  margin-bottom: 8px;
+}
+
+.sold-out-stats .stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #c0392b;
+}
+
+.sold-out-actions {
+  margin-top: 32px;
+}
+
+.browse-events-btn {
+  background: transparent;
+  color: #c0392b;
+  border-color: #c0392b;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 0 32px;
+  height: 48px;
+}
+
+.browse-events-btn:hover {
+  background: #c0392b;
+  color: white;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+  .sold-out-stats {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .sold-out-content {
+    padding: 32px 20px;
+  }
+}

@@ -1,0 +1,210 @@
+<div class="profile-container" *ngIf="!isLoading && user">
+  <!-- Header -->
+  <div class="profile-header">
+    <div class="user-avatar">
+      <mat-icon>account_circle</mat-icon>
+    </div>
+    <div class="user-info">
+      <h1>{{ user.name }}</h1>
+      <mat-chip [class]="getRoleClass(user.role)">
+        <mat-icon>{{ getRoleIcon(user.role) }}</mat-icon>
+        {{ user.role | titlecase }}
+      </mat-chip>
+      <p class="join-date">Member since {{ formatDate(user.created_at) }}</p>
+    </div>
+  </div>
+
+  <!-- Profile Management -->
+  <mat-card class="profile-card">
+    <mat-tab-group>
+      <!-- Profile Information -->
+      <mat-tab label="Profile Information">
+        <div class="tab-content">
+          <h2>
+            <mat-icon>person</mat-icon>
+            Personal Information
+          </h2>
+          
+          <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()" class="profile-form">
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Full Name</mat-label>
+                <input matInput formControlName="name" placeholder="Enter your full name">
+                <mat-icon matSuffix>person</mat-icon>
+                <mat-error *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched">
+                  {{ getErrorMessage(profileForm, 'name') }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email Address</mat-label>
+                <input matInput formControlName="email" type="email" placeholder="Enter your email">
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-error *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                  {{ getErrorMessage(profileForm, 'email') }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-actions">
+              <button mat-raised-button color="primary" type="submit" 
+                      [disabled]="profileForm.invalid || isUpdatingProfile">
+                <mat-spinner diameter="20" *ngIf="isUpdatingProfile"></mat-spinner>
+                <mat-icon *ngIf="!isUpdatingProfile">save</mat-icon>
+                {{ isUpdatingProfile ? 'Updating...' : 'Update Profile' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+
+      <!-- Change Password -->
+      <mat-tab label="Change Password">
+        <div class="tab-content">
+          <h2>
+            <mat-icon>lock</mat-icon>
+            Change Password
+          </h2>
+          
+          <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="password-form">
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Current Password</mat-label>
+                <input matInput formControlName="currentPassword" 
+                       [type]="hideCurrentPassword ? 'password' : 'text'"
+                       placeholder="Enter current password">
+                <button mat-icon-button matSuffix type="button"
+                        (click)="hideCurrentPassword = !hideCurrentPassword">
+                  <mat-icon>{{ hideCurrentPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
+                  {{ getErrorMessage(passwordForm, 'currentPassword') }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>New Password</mat-label>
+                <input matInput formControlName="newPassword" 
+                       [type]="hideNewPassword ? 'password' : 'text'"
+                       placeholder="Enter new password">
+                <button mat-icon-button matSuffix type="button"
+                        (click)="hideNewPassword = !hideNewPassword">
+                  <mat-icon>{{ hideNewPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+                  {{ getErrorMessage(passwordForm, 'newPassword') }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Confirm New Password</mat-label>
+                <input matInput formControlName="confirmPassword" 
+                       [type]="hideConfirmPassword ? 'password' : 'text'"
+                       placeholder="Confirm new password">
+                <button mat-icon-button matSuffix type="button"
+                        (click)="hideConfirmPassword = !hideConfirmPassword">
+                  <mat-icon>{{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched">
+                  {{ getErrorMessage(passwordForm, 'confirmPassword') }}
+                </mat-error>
+                <mat-error *ngIf="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched">
+                  {{ getErrorMessage(passwordForm, 'confirmPassword') }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="password-requirements">
+              <h4>Password Requirements:</h4>
+              <ul>
+                <li>At least 6 characters long</li>
+                <li>Should be different from your current password</li>
+                <li>Use a combination of letters, numbers, and symbols for better security</li>
+              </ul>
+            </div>
+
+            <div class="form-actions">
+              <button mat-raised-button color="primary" type="submit" 
+                      [disabled]="passwordForm.invalid || isChangingPassword">
+                <mat-spinner diameter="20" *ngIf="isChangingPassword"></mat-spinner>
+                <mat-icon *ngIf="!isChangingPassword">security</mat-icon>
+                {{ isChangingPassword ? 'Changing...' : 'Change Password' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+
+      <!-- Account Settings -->
+      <mat-tab label="Account Settings">
+        <div class="tab-content">
+          <h2>
+            <mat-icon>settings</mat-icon>
+            Account Settings
+          </h2>
+          
+          <div class="settings-section">
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Account Type</h3>
+                <p>Your current account type determines your access level</p>
+              </div>
+              <div class="setting-value">
+                <mat-chip [class]="getRoleClass(user.role)">
+                  <mat-icon>{{ getRoleIcon(user.role) }}</mat-icon>
+                  {{ user.role | titlecase }}
+                </mat-chip>
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Account Created</h3>
+                <p>When you joined Smart Event Planner</p>
+              </div>
+              <div class="setting-value">
+                <span class="date-value">{{ formatDate(user.created_at) }}</span>
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>User ID</h3>
+                <p>Your unique identifier in the system</p>
+              </div>
+              <div class="setting-value">
+                <span class="id-value">#{{ user.id }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="danger-zone">
+            <h3>
+              <mat-icon>warning</mat-icon>
+              Danger Zone
+            </h3>
+            <p>These actions cannot be undone. Please be careful.</p>
+            
+            <button mat-stroked-button color="warn" disabled>
+              <mat-icon>delete_forever</mat-icon>
+              Delete Account
+            </button>
+            <small>Account deletion is currently not available. Contact support if needed.</small>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Loading profile...</p>
+</div>
