@@ -136,7 +136,7 @@ router.get('/:id', async (req, res, next) => {
 // Create event (organizers only)
 router.post('/', 
   authenticateToken, 
-  authorizeRoles('organizer', 'admin'),
+  authorizeRoles('organizer'),
   validateRequest(schemas.createEvent),
   async (req: AuthRequest, res, next) => {
     try {
@@ -181,7 +181,7 @@ router.post('/',
 // Get organizer's events
 router.get('/organizer/my-events',
   authenticateToken,
-  authorizeRoles('organizer', 'admin'),
+  authorizeRoles('organizer'),
   async (req: AuthRequest, res, next) => {
     try {
       const organizerId = req.user!.id;
@@ -196,7 +196,7 @@ router.get('/organizer/my-events',
 // Get organizer dashboard statistics
 router.get('/organizer/dashboard-stats',
   authenticateToken,
-  authorizeRoles('organizer', 'admin'),
+  authorizeRoles('organizer'),
   async (req: AuthRequest, res, next) => {
     try {
       const organizerId = req.user!.id;
@@ -211,7 +211,7 @@ router.get('/organizer/dashboard-stats',
 // Update event (organizers only)
 router.put('/:id', 
   authenticateToken, 
-  authorizeRoles('organizer', 'admin'),
+  authorizeRoles('organizer'),
   validateRequest(schemas.updateEvent),
   async (req: AuthRequest, res, next) => {
     try {
@@ -225,7 +225,7 @@ router.put('/:id',
         return res.status(404).json({ error: 'Event not found' });
       }
 
-      if (existingEvent.organizer_id !== organizer_id && req.user!.role !== 'admin') {
+      if (existingEvent.organizer_id !== organizer_id) {
         return res.status(403).json({ error: 'Not authorized to update this event' });
       }
 
@@ -256,7 +256,7 @@ router.put('/:id',
 // Cancel/Delete event (organizers only)
 router.delete('/:id',
   authenticateToken,
-  authorizeRoles('organizer', 'admin'),
+  authorizeRoles('organizer'),
   async (req: AuthRequest, res, next) => {
     try {
       const { id } = req.params;
@@ -268,7 +268,7 @@ router.delete('/:id',
         return res.status(404).json({ error: 'Event not found' });
       }
 
-      if (existingEvent.organizer_id !== organizer_id && req.user!.role !== 'admin') {
+      if (existingEvent.organizer_id !== organizer_id) {
         return res.status(403).json({ error: 'Not authorized to delete this event' });
       }
 

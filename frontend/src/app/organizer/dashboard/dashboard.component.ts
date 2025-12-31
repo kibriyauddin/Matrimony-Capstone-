@@ -10,6 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject, takeUntil } from 'rxjs';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
@@ -52,7 +53,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private eventService: EventService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -181,7 +183,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   deleteEvent(event: Event): void {
-    // Future implementation: Delete event with confirmation
-    console.log('Delete event:', event.name);
+    // Show confirmation dialog
+    const confirmed = confirm(`Are you sure you want to cancel "${event.name}"? This action cannot be undone and all bookings will be cancelled.`);
+    
+    if (confirmed) {
+      this.performEventCancellation(event);
+    }
+  }
+
+  private performEventCancellation(event: Event): void {
+    this.eventService.cancelEvent(event.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Show success message
+          this.snackBar.open('Event cancelled successfully!', 'Close', {
+            duration: 3000
+          });
+          
+          // Refresh the dashboard data
+          this.loadOrganizerEvents();
+          this.loadDashboardStats();
+        },
+        error: (error) => {
+          const errorMessage = error.error?.error || 'Failed to cancel event. Please try again.';
+          this.snackBar.open(errorMessage, 'Close', {
+            duration: 5000
+          });
+        }
+      });
   }
 }

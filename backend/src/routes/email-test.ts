@@ -15,7 +15,7 @@ const router = express.Router();
 // Test email configuration
 router.get('/status', 
   authenticateToken,
-  authorizeRoles('organizer', 'admin'),
+  authorizeRoles('organizer'),
   async (req: AuthRequest, res: Response) => {
     try {
       const status = emailTestService.getEmailStatus();
@@ -33,7 +33,7 @@ router.get('/status',
 // Test cancellation email
 router.post('/test-cancellation',
   authenticateToken,
-  authorizeRoles('organizer', 'admin'),
+  authorizeRoles('organizer'),
   async (req: AuthRequest, res: Response) => {
     try {
       const { attendeeEmail, eventName, reason } = req.body;
@@ -86,7 +86,7 @@ router.post('/test-cancellation',
 // Monitor email logs (last 10 email attempts)
 router.get('/logs',
   authenticateToken,
-  authorizeRoles('organizer', 'admin'),
+  authorizeRoles('organizer'),
   async (req: AuthRequest, res: Response) => {
     try {
       // This would typically read from a log file or database

@@ -34,8 +34,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   currentUser: User | null = null;
   recentEvents: Event[] = [];
   totalEvents = 0;
-  totalBookings = 1250;
-  totalOrganizers = 85;
+  totalBookings = 89;
+  totalOrganizers = 12;
   isLoading = true;
   error: string | null = null;
   
@@ -97,8 +97,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       // These could be loaded from actual API endpoints
       // For now using mock data with slight delay to simulate loading
       setTimeout(() => {
-        this.totalBookings = 1250;
-        this.totalOrganizers = 85;
+        this.totalBookings = 89;
+        this.totalOrganizers = 12;
         resolve();
       }, 500);
     });

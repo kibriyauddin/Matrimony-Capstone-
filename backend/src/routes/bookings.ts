@@ -135,7 +135,7 @@ router.get('/:id',
       }
 
       // Check if user can access this booking
-      if (userRole !== 'admin' && booking.attendee_id !== userId) {
+      if (booking.attendee_id !== userId) {
         return res.status(403).json({ error: 'Not authorized to view this booking' });
       }
 
@@ -163,10 +163,7 @@ router.delete('/:id',
       // Check if user can cancel this booking
       let canCancel = false;
       
-      if (userRole === 'admin') {
-        // Admins can cancel any booking
-        canCancel = true;
-      } else if (booking.attendee_id === userId) {
+      if (booking.attendee_id === userId) {
         // Users can cancel their own bookings
         canCancel = true;
       } else if (userRole === 'organizer') {
@@ -191,7 +188,7 @@ router.delete('/:id',
       const hoursUntilEvent = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
       // For regular attendees, enforce 24-hour rule
-      // For organizers and admins, allow cancellation anytime before the event
+      // For organizers, allow cancellation anytime before the event
       if (booking.attendee_id === userId && hoursUntilEvent < 24) {
         return res.status(400).json({ 
           error: 'Cannot cancel booking less than 24 hours before the event' 
@@ -279,11 +276,13 @@ router.get('/event/:eventId/attendees',
       const userRole = req.user!.role;
 
       // Check if user can view attendees
-      if (userRole !== 'admin') {
-        const event = await db.findEventById(parseInt(eventId));
-        if (!event || event.organizer_id !== userId) {
-          return res.status(403).json({ error: 'Not authorized to view attendees' });
-        }
+      if (userRole !== 'organizer') {
+        return res.status(403).json({ error: 'Not authorized to view attendees' });
+      }
+      
+      const event = await db.findEventById(parseInt(eventId));
+      if (!event || event.organizer_id !== userId) {
+        return res.status(403).json({ error: 'Not authorized to view attendees' });
       }
 
       const attendees = await db.getEventAttendees(parseInt(eventId));

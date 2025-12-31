@@ -65,6 +65,23 @@ export class EventService {
   }
 
   getCategories(): string[] {
-    return ['Music', 'Workshop', 'Conference', 'Sports', 'Other'];
+    return [
+      'Music', 
+      'Workshop', 
+      'Conference', 
+      'Sports', 
+      'Technology',
+      'Business',
+      'Arts & Culture',
+      'Food & Drink',
+      'Health & Wellness',
+      'Education',
+      'Entertainment',
+      'Networking',
+      'Charity',
+      'Fashion',
+      'Travel',
+      'Other'
+    ];
   }
 }

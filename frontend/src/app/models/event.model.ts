@@ -5,7 +5,7 @@ export interface Event {
   description?: string;
   venue: string;
   date_time: Date;
-  category: 'Music' | 'Workshop' | 'Conference' | 'Sports' | 'Other';
+  category: 'Music' | 'Workshop' | 'Conference' | 'Sports' | 'Technology' | 'Business' | 'Arts & Culture' | 'Food & Drink' | 'Health & Wellness' | 'Education' | 'Entertainment' | 'Networking' | 'Charity' | 'Fashion' | 'Travel' | 'Other';
   capacity: number;
   ticket_price: number;
   image_url?: string | null;

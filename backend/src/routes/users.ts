@@ -104,18 +104,6 @@ router.put('/change-password',
   }
 );
 
-// Get all users (admin only)
-router.get('/',
-  authenticateToken,
-  authorizeRoles('admin'),
-  async (req, res, next) => {
-    try {
-      const users = await db.getAllUsers();
-      res.json(users);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+
 
 export default router;

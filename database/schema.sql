@@ -9,7 +9,7 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
-    role ENUM('attendee', 'organizer', 'admin') DEFAULT 'attendee',
+    role ENUM('attendee', 'organizer') DEFAULT 'attendee',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE events (
     description TEXT,
     venue VARCHAR(255) NOT NULL,
     date_time DATETIME NOT NULL,
-    category ENUM('Music', 'Workshop', 'Conference', 'Sports', 'Other') NOT NULL,
+    category ENUM('Music', 'Workshop', 'Conference', 'Sports', 'Technology', 'Business', 'Arts & Culture', 'Food & Drink', 'Health & Wellness', 'Education', 'Entertainment', 'Networking', 'Charity', 'Fashion', 'Travel', 'Other') NOT NULL,
     capacity INT NOT NULL CHECK (capacity > 0),
     ticket_price DECIMAL(10, 2) DEFAULT 0.00,
     image_url LONGTEXT,
@@ -50,6 +50,6 @@ CREATE TABLE bookings (
     INDEX idx_qr_code (qr_code)
 );
 
--- Insert sample admin user
+-- Insert sample organizer user
 INSERT INTO users (email, password, name, role) VALUES 
-('admin@eventplanner.com', '$2b$10$example_hashed_password', 'Admin User', 'admin');
+('organizer@eventplanner.com', '$2b$10$example_hashed_password', 'Event Organizer', 'organizer');

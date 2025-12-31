@@ -6,7 +6,7 @@ export interface MockUser {
   email: string;
   password: string;
   name: string;
-  role: 'attendee' | 'organizer' | 'admin';
+  role: 'attendee' | 'organizer';
   created_at: Date;
 }
 
@@ -17,7 +17,7 @@ export interface MockEvent {
   description?: string;
   venue: string;
   date_time: Date;
-  category: 'Music' | 'Workshop' | 'Conference' | 'Sports' | 'Other';
+  category: 'Music' | 'Workshop' | 'Conference' | 'Sports' | 'Technology' | 'Business' | 'Arts & Culture' | 'Food & Drink' | 'Health & Wellness' | 'Education' | 'Entertainment' | 'Networking' | 'Charity' | 'Fashion' | 'Travel' | 'Other';
   capacity: number;
   ticket_price: number;
   image_url?: string;
@@ -37,16 +37,7 @@ export interface MockBooking {
 }
 
 class MockDatabase {
-  private users: MockUser[] = [
-    {
-      id: 1,
-      email: 'admin@eventplanner.com',
-      password: '$2b$10$example_hashed_password',
-      name: 'Admin User',
-      role: 'admin',
-      created_at: new Date()
-    }
-  ];
+  private users: MockUser[] = [];
 
   private events: MockEvent[] = [
     {

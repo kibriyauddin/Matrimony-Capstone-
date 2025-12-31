@@ -233,7 +233,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   getRoleClass(role: string): string {
     switch (role) {
-      case 'admin': return 'admin-role';
       case 'organizer': return 'organizer-role';
       case 'attendee': return 'attendee-role';
       default: return '';
@@ -242,7 +241,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   getRoleIcon(role: string): string {
     switch (role) {
-      case 'admin': return 'admin_panel_settings';
       case 'organizer': return 'business';
       case 'attendee': return 'person';
       default: return 'person';

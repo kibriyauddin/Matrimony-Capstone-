@@ -39,7 +39,7 @@ export class TestApiComponent implements OnInit {
     this.result = null;
     this.error = null;
     
-    this.http.get('http://localhost:3001/api/health').subscribe({
+    this.http.get('http://localhost:3002/api/health').subscribe({
       next: (response) => {
         this.result = response;
         console.log('Health API success:', response);
@@ -55,7 +55,7 @@ export class TestApiComponent implements OnInit {
     this.result = null;
     this.error = null;
     
-    this.http.get('http://localhost:3001/api/events').subscribe({
+    this.http.get('http://localhost:3002/api/events').subscribe({
       next: (response) => {
         this.result = response;
         console.log('Events API success:', response);
@@ -78,7 +78,7 @@ export class TestApiComponent implements OnInit {
       role: 'attendee'
     };
     
-    this.http.post('http://localhost:3001/api/auth/register', testUser).subscribe({
+    this.http.post('http://localhost:3002/api/auth/register', testUser).subscribe({
       next: (response) => {
         this.result = response;
         console.log('Register API success:', response);

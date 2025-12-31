@@ -18,7 +18,7 @@ export interface Event {
   description?: string;
   venue: string;
   date_time: Date;
-  category: 'Music' | 'Workshop' | 'Conference' | 'Sports' | 'Other';
+  category: 'Music' | 'Workshop' | 'Conference' | 'Sports' | 'Technology' | 'Business' | 'Arts & Culture' | 'Food & Drink' | 'Health & Wellness' | 'Education' | 'Entertainment' | 'Networking' | 'Charity' | 'Fashion' | 'Travel' | 'Other';
   capacity: number;
   ticket_price: number;
   image_url?: string;
@@ -259,12 +259,28 @@ class DatabaseService {
 
   async cancelEvent(id: number): Promise<boolean> {
     try {
+      // Start a transaction to ensure both operations succeed or fail together
+      await pool.execute('START TRANSACTION');
+      
+      // First, cancel all bookings for this event
+      await pool.execute(
+        'UPDATE bookings SET status = ? WHERE event_id = ? AND status = ?',
+        ['cancelled', id, 'confirmed']
+      );
+      
+      // Then, cancel the event itself
       const [result] = await pool.execute<ResultSetHeader>(
         'UPDATE events SET status = ? WHERE id = ?',
         ['cancelled', id]
       );
+      
+      // Commit the transaction
+      await pool.execute('COMMIT');
+      
       return result.affectedRows > 0;
     } catch (error) {
+      // Rollback the transaction on error
+      await pool.execute('ROLLBACK');
       console.error('Error cancelling event:', error);
       throw error;
     }
