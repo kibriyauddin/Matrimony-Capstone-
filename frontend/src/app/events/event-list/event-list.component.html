@@ -1,0 +1,182 @@
+<div class="events-container">
+  <!-- Hero Section -->
+  <div class="events-hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Discover Amazing Events</h1>
+      <p class="hero-subtitle">Find and book tickets for events that interest you</p>
+      
+      <!-- Quick Search -->
+      <div class="quick-search">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search events...</mat-label>
+          <input matInput formControlName="search" placeholder="Event name, venue, or organizer">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        <div class="search-buttons">
+          <button mat-stroked-button color="primary" class="search-btn" (click)="performSearch()">
+            <mat-icon>search</mat-icon>
+            Search
+          </button>
+          <button mat-stroked-button class="reset-btn" (click)="clearFilters()">
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Bar -->
+  <div class="filters-bar">
+    <div class="filters-content">
+      <form [formGroup]="filterForm" class="filters-form">
+        
+        <!-- Category Filter -->
+        <mat-form-field appearance="outline" class="filter-chip">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="category">
+            <mat-option value="">All Categories</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category">
+              <div class="category-option">
+                <mat-icon>{{ getCategoryIcon(category) }}</mat-icon>
+                {{ category }}
+              </div>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Venue Filter -->
+        <mat-form-field appearance="outline" class="filter-chip">
+          <mat-label>Venue</mat-label>
+          <input matInput formControlName="venue" placeholder="Location">
+          <mat-icon matSuffix>location_on</mat-icon>
+        </mat-form-field>
+
+        <!-- Date Filter -->
+        <mat-form-field appearance="outline" class="filter-chip">
+          <mat-label>Date</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="date" readonly>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </form>
+    </div>
+    
+    <!-- Results Row -->
+    <div class="results-row">
+      <div class="results-info">
+        <span class="results-count">{{ filteredEvents.length }} events found</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading amazing events...</p>
+  </div>
+
+  <!-- Events Grid -->
+  <div *ngIf="!isLoading && filteredEvents.length > 0" class="events-section">
+    <div class="events-grid">
+      <div 
+        *ngFor="let event of filteredEvents" 
+        class="event-card"
+        (click)="viewEventDetails(event.id)">
+        
+        <!-- Event Image -->
+        <div class="event-image-container">
+          <div class="event-image" [style.background-image]="event.image_url ? 'url(' + event.image_url + ')' : 'none'">
+            <div class="event-overlay">
+              <mat-chip class="category-chip">
+                <mat-icon>{{ getCategoryIcon(event.category) }}</mat-icon>
+                {{ event.category }}
+              </mat-chip>
+              <!-- Capacity Warning Badge -->
+              <div class="capacity-badges">
+                <mat-chip *ngIf="getCapacityStatus(event) === 'almost-full'" class="capacity-warning">
+                  <mat-icon>warning</mat-icon>
+                  Almost Full
+                </mat-chip>
+                <mat-chip *ngIf="getCapacityStatus(event) === 'sold-out'" class="capacity-sold-out">
+                  <mat-icon>block</mat-icon>
+                  Sold Out
+                </mat-chip>
+                <mat-chip *ngIf="getCapacityStatus(event) === 'hot'" class="capacity-hot">
+                  <mat-icon>local_fire_department</mat-icon>
+                  Hot Event
+                </mat-chip>
+              </div>
+            </div>
+            <div *ngIf="!event.image_url" class="image-placeholder">
+              <mat-icon>event</mat-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event Content -->
+        <div class="event-content">
+          <div class="event-header">
+            <h3 class="event-title">{{ event.name }}</h3>
+            <div class="event-price" [class.free]="event.ticket_price === 0">
+              {{ event.ticket_price === 0 ? 'FREE' : ('₹' + (event.ticket_price | number:'1.0-0')) }}
+            </div>
+          </div>
+
+          <div class="event-meta">
+            <div class="meta-item">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ formatEventDate(event.date_time) }}</span>
+            </div>
+            
+            <div class="meta-item">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ event.venue }}</span>
+            </div>
+            
+            <div class="meta-item">
+              <mat-icon>person</mat-icon>
+              <span>{{ event.organizer_name }}</span>
+            </div>
+          </div>
+
+          <p *ngIf="event.description" class="event-description">
+            {{ event.description | slice:0:100 }}{{ event.description && event.description.length > 100 ? '...' : '' }}
+          </p>
+
+          <div class="event-footer">
+            <div class="availability-info">
+              <div class="availability" [class]="getAvailabilityClass(event)">
+                {{ getAvailabilityText(event) }}
+              </div>
+            </div>
+            
+            <button mat-raised-button color="primary" class="view-btn" (click)="$event.stopPropagation(); viewEventDetails(event.id)">
+              <mat-icon>visibility</mat-icon>
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Events Message -->
+  <div *ngIf="!isLoading && filteredEvents.length === 0" class="no-events">
+    <div class="no-events-content">
+      <mat-icon class="no-events-icon">event_busy</mat-icon>
+      <h3>No events found</h3>
+      <p>Try adjusting your filters or check back later for new events.</p>
+      <div class="no-events-actions">
+        <button mat-raised-button color="primary" (click)="clearFilters()">
+          <mat-icon>refresh</mat-icon>
+          Clear Filters
+        </button>
+        <button mat-stroked-button routerLink="/home">
+          <mat-icon>home</mat-icon>
+          Back to Home
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

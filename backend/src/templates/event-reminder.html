@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Reminder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f59e0b;
+        }
+        .header h1 {
+            color: #f59e0b;
+            margin: 0;
+            font-size: 28px;
+        }
+        .event-details {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border-left: 4px solid #f59e0b;
+        }
+        .event-details h3 {
+            color: #d97706;
+            margin-top: 0;
+            font-size: 20px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #fbbf24;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .label {
+            font-weight: 600;
+            color: #92400e;
+        }
+        .value {
+            color: #451a03;
+        }
+        .countdown {
+            text-align: center;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .countdown h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+        }
+        .checklist {
+            background: #ecfdf5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
+        .checklist h4 {
+            color: #059669;
+            margin-top: 0;
+        }
+        .checklist ul {
+            color: #065f46;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏰ Event Reminder</h1>
+            <p>Don't forget about your upcoming event!</p>
+        </div>
+
+        <div class="countdown">
+            <h2>🚨 Your Event is Tomorrow! 🚨</h2>
+            <p>Get ready for an amazing experience!</p>
+        </div>
+
+        <p>Dear <strong>{{attendeeName}}</strong>,</p>
+        
+        <p>This is a friendly reminder that your event is happening tomorrow. We hope you're as excited as we are!</p>
+
+        <div class="event-details">
+            <h3>📅 Event Details</h3>
+            <div class="detail-row">
+                <span class="label">Event Name:</span>
+                <span class="value">{{eventName}}</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Date & Time:</span>
+                <span class="value">{{eventDate}} at {{eventTime}}</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Venue:</span>
+                <span class="value">{{venue}}</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Your Tickets:</span>
+                <span class="value">{{ticketsBooked}} ticket(s)</span>
+            </div>
+        </div>
+
+        <div class="checklist">
+            <h4>✅ Pre-Event Checklist</h4>
+            <ul>
+                <li><strong>QR Code:</strong> Make sure you have your booking QR code ready (check your confirmation email)</li>
+                <li><strong>Valid ID:</strong> Bring a government-issued photo ID</li>
+                <li><strong>Arrive Early:</strong> Plan to arrive 15-30 minutes before the event starts</li>
+                <li><strong>Check Weather:</strong> Dress appropriately for the weather conditions</li>
+                <li><strong>Contact Info:</strong> Save our support number in case you need assistance</li>
+            </ul>
+        </div>
+
+        <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <h4 style="color: #1d4ed8; margin-top: 0;">📍 Need Directions?</h4>
+            <p style="color: #1e40af; margin: 0;">
+                <strong>Venue:</strong> {{venue}}<br>
+                We recommend checking traffic conditions and planning your route in advance.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>We can't wait to see you there!</p>
+            <p>Have an amazing time at <strong>{{eventName}}</strong>!</p>
+            <p>For any last-minute questions, contact us at support@smarteventplanner.com</p>
+            <p style="font-size: 12px; color: #94a3b8;">
+                This is an automated reminder email. Please do not reply to this email address.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

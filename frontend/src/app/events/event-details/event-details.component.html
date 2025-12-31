@@ -1,0 +1,226 @@
+<div class="event-details-container" *ngIf="!isLoading && event">
+  <!-- Back Button -->
+  <div class="back-navigation">
+    <button mat-button routerLink="/events" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Events
+    </button>
+  </div>
+
+  <!-- Event Header -->
+  <mat-card class="event-header-card">
+    <div class="event-header-content">
+      <div class="event-image-section">
+        <div class="event-image">
+          <img *ngIf="event.image_url" [src]="event.image_url" [alt]="event.name">
+          <div *ngIf="!event.image_url" class="placeholder-image">
+            <mat-icon>event</mat-icon>
+          </div>
+        </div>
+      </div>
+      
+      <div class="event-info-section">
+        <div class="event-category">
+          <mat-chip-set>
+            <mat-chip>{{ event.category }}</mat-chip>
+          </mat-chip-set>
+        </div>
+        
+        <h1 class="event-title">{{ event.name }}</h1>
+        
+        <div class="event-meta">
+          <div class="meta-item">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ formatEventDate(event.date_time) }} at {{ formatEventTime(event.date_time) }}</span>
+          </div>
+          
+          <div class="meta-item">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ event.venue }}</span>
+          </div>
+          
+          <div class="meta-item">
+            <mat-icon>person</mat-icon>
+            <span>Organized by {{ event.organizer_name }}</span>
+          </div>
+        </div>
+        
+        <div class="pricing-availability">
+          <div class="price">
+            <span class="price-label">Price:</span>
+            <span class="price-value" [class.free]="event.ticket_price === 0">
+              {{ event.ticket_price === 0 ? 'FREE' : ('₹' + (event.ticket_price | number:'1.0-0')) }}
+            </span>
+          </div>
+          
+          <div class="availability" [class]="getAvailabilityClass()">
+            {{ getAvailabilityText() }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Event Description -->
+  <mat-card class="event-description-card" *ngIf="event.description">
+    <mat-card-header>
+      <mat-card-title>About This Event</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p class="event-description">{{ event.description }}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Booking Section -->
+  <mat-card class="booking-card" *ngIf="!isSoldOut() && canBookTickets()">
+    <mat-card-header>
+      <mat-card-title>Book Your Tickets</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="bookingForm" (ngSubmit)="bookTickets()" class="booking-form">
+        <mat-form-field appearance="outline" class="tickets-field">
+          <mat-label>Number of Tickets</mat-label>
+          <input 
+            matInput 
+            type="number" 
+            formControlName="tickets_booked"
+            [max]="event?.available_tickets || 0"
+            min="1">
+          <mat-hint>Maximum {{ event?.available_tickets || 0 }} tickets available</mat-hint>
+          <mat-error *ngIf="bookingForm.get('tickets_booked')?.hasError('required')">
+            Number of tickets is required
+          </mat-error>
+          <mat-error *ngIf="bookingForm.get('tickets_booked')?.hasError('min')">
+            Minimum 1 ticket required
+          </mat-error>
+          <mat-error *ngIf="bookingForm.get('tickets_booked')?.hasError('max')">
+            Maximum {{ event?.available_tickets || 0 }} tickets available
+          </mat-error>
+        </mat-form-field>
+
+        <div class="booking-summary">
+          <div class="summary-row">
+            <span>Tickets:</span>
+            <span>{{ bookingForm.value.tickets_booked || 1 }} × ₹{{ event?.ticket_price | number:'1.0-0' }}</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span>₹{{ ((bookingForm.value.tickets_booked || 1) * (event?.ticket_price || 0)) | number:'1.0-0' }}</span>
+          </div>
+        </div>
+
+        <div class="booking-actions">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit"
+            [disabled]="bookingForm.invalid || isBooking || !isAuthenticated()"
+            class="book-btn">
+            <mat-spinner *ngIf="isBooking" diameter="20" class="loading-spinner"></mat-spinner>
+            {{ isBooking ? 'Booking...' : 'Book Tickets' }}
+          </button>
+          
+          <button 
+            *ngIf="!isAuthenticated()"
+            mat-stroked-button 
+            color="primary"
+            routerLink="/auth/login"
+            class="login-btn">
+            Login to Book
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Sold Out Section -->
+  <mat-card class="sold-out-card" *ngIf="isSoldOut()">
+    <mat-card-content class="sold-out-content">
+      <div class="sold-out-icon">
+        <mat-icon>block</mat-icon>
+      </div>
+      <h3>Event Sold Out</h3>
+      <p>Unfortunately, all tickets for this event have been sold. Check back later for similar events or contact the organizer for waitlist information.</p>
+      
+      <div class="sold-out-stats">
+        <div class="stat-item">
+          <span class="stat-label">Total Capacity:</span>
+          <span class="stat-value">{{ event.capacity }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Tickets Sold:</span>
+          <span class="stat-value">{{ event.tickets_sold || 0 }}</span>
+        </div>
+      </div>
+
+      <div class="sold-out-actions">
+        <button mat-stroked-button routerLink="/events" class="browse-events-btn">
+          <mat-icon>search</mat-icon>
+          Browse Other Events
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Organizer Info Card -->
+  <mat-card class="organizer-info-card" *ngIf="isOrganizer() && event.available_tickets && event.available_tickets > 0">
+    <mat-card-content class="organizer-info-content">
+      <mat-icon class="organizer-icon">business_center</mat-icon>
+      <h3>Organizer View</h3>
+      <p>As an organizer, you can view event details but cannot book tickets. Attendees can book tickets for this event.</p>
+      <div class="organizer-stats">
+        <div class="stat-item">
+          <span class="stat-label">Available Tickets:</span>
+          <span class="stat-value">{{ event.available_tickets }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Tickets Sold:</span>
+          <span class="stat-value">{{ event.tickets_sold || 0 }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Total Capacity:</span>
+          <span class="stat-value">{{ event.capacity }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Sold Out Message -->
+  <mat-card class="sold-out-card" *ngIf="(!event.available_tickets || event.available_tickets === 0) && canBookTickets()">
+    <mat-card-content class="sold-out-content">
+      <mat-icon class="sold-out-icon">event_busy</mat-icon>
+      <h3>Event Sold Out</h3>
+      <p>Unfortunately, all tickets for this event have been sold.</p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Organizer Sold Out Info -->
+  <mat-card class="organizer-info-card" *ngIf="(!event.available_tickets || event.available_tickets === 0) && isOrganizer()">
+    <mat-card-content class="organizer-info-content">
+      <mat-icon class="organizer-icon">event_busy</mat-icon>
+      <h3>Event Sold Out</h3>
+      <p>This event has reached full capacity. All {{ event.capacity }} tickets have been sold.</p>
+      <div class="organizer-stats">
+        <div class="stat-item">
+          <span class="stat-label">Total Capacity:</span>
+          <span class="stat-value">{{ event.capacity }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Tickets Sold:</span>
+          <span class="stat-value">{{ event.tickets_sold || event.capacity }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Revenue:</span>
+          <span class="stat-value">₹{{ ((event.tickets_sold || event.capacity) * event.ticket_price) | number:'1.0-0' }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Loading event details...</p>
+</div>

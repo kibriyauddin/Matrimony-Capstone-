@@ -1,0 +1,105 @@
+.register-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.register-card {
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.register-title {
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.register-subtitle {
+  color: #666;
+  font-size: 14px;
+}
+
+.register-form {
+  width: 100%;
+}
+
+.form-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.role-selection {
+  margin: 20px 0;
+}
+
+.role-selection h4 {
+  margin-bottom: 12px;
+  color: #333;
+  font-size: 16px;
+}
+
+.role-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.role-button {
+  flex: 1;
+  height: 48px;
+  font-weight: 500;
+}
+
+.role-button.selected {
+  background-color: #3f51b5;
+  color: white;
+}
+
+.register-button {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 20px 0;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.login-link a {
+  color: #3f51b5;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.loading-spinner {
+  margin-right: 8px;
+}
+
+@media (max-width: 480px) {
+  .register-card {
+    margin: 16px;
+    padding: 16px;
+  }
+  
+  .role-buttons {
+    flex-direction: column;
+  }
+}

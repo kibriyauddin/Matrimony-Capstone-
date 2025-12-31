@@ -1,0 +1,102 @@
+<div class="bookings-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">My Bookings</h1>
+    <p class="page-subtitle">View and manage your event tickets</p>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading your bookings...</p>
+  </div>
+
+  <!-- Bookings List -->
+  <div *ngIf="!isLoading && bookings.length > 0" class="bookings-grid">
+    <mat-card *ngFor="let booking of bookings" class="booking-card">
+      <mat-card-header class="booking-header">
+        <div class="booking-status">
+          <mat-chip [class]="getStatusClass(booking.status)">
+            {{ booking.status | titlecase }}
+          </mat-chip>
+        </div>
+        <div class="booking-date">
+          Booked on {{ formatBookingDate(booking.booking_time) }}
+        </div>
+      </mat-card-header>
+
+      <mat-card-content class="booking-content">
+        <div class="event-info">
+          <h3 class="event-name">{{ booking.event_name }}</h3>
+          
+          <div class="event-details">
+            <div class="detail-item">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ formatEventDate(booking.event_date!) }} at {{ formatEventTime(booking.event_date!) }}</span>
+            </div>
+            
+            <div class="detail-item">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ booking.venue }}</span>
+            </div>
+            
+            <div class="detail-item">
+              <mat-icon>confirmation_number</mat-icon>
+              <span>{{ booking.tickets_booked }} {{ booking.tickets_booked === 1 ? 'ticket' : 'tickets' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-summary">
+          <div class="total-price">
+            <span class="price-label">Total Paid:</span>
+            <span class="price-value">₹{{ parseNumber(booking.total_price) | number:'1.0-0' }}</span>
+          </div>
+          <div class="booking-id">
+            Booking #{{ booking.id }}
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions class="booking-actions">
+        <button 
+          mat-raised-button 
+          color="primary"
+          [routerLink]="['/booking', booking.id]"
+          class="view-details-btn">
+          <mat-icon>qr_code</mat-icon>
+          View Ticket
+        </button>
+        
+        <button 
+          mat-button 
+          [routerLink]="['/events', booking.event_id]"
+          class="view-event-btn">
+          <mat-icon>event</mat-icon>
+          View Event
+        </button>
+
+        <button 
+          mat-button 
+          color="warn"
+          (click)="cancelBooking(booking)"
+          class="cancel-booking-btn"
+          *ngIf="booking.status === 'confirmed'">
+          <mat-icon>cancel</mat-icon>
+          Cancel Booking
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- No Bookings Message -->
+  <div *ngIf="!isLoading && bookings.length === 0" class="no-bookings">
+    <mat-icon class="no-bookings-icon">confirmation_number</mat-icon>
+    <h3>No Bookings Yet</h3>
+    <p>You haven't booked any tickets yet. Browse events to get started!</p>
+    <button mat-raised-button color="primary" routerLink="/events" class="browse-events-btn">
+      <mat-icon>event</mat-icon>
+      Browse Events
+    </button>
+  </div>
+</div>

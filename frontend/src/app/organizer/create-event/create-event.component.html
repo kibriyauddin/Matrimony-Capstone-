@@ -1,0 +1,409 @@
+<div class="create-event-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button mat-icon-button (click)="onCancel()" class="back-btn">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-text">
+          <h1 class="page-title">Create New Event</h1>
+          <p class="page-subtitle">Fill in the details to create your amazing event</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button mat-stroked-button (click)="onCancel()" [disabled]="isLoading" class="cancel-btn">
+          Cancel
+        </button>
+        <button mat-raised-button 
+                color="primary" 
+                (click)="onSubmit()"
+                [disabled]="isLoading"
+                class="save-btn">
+          <mat-icon *ngIf="!isLoading">save</mat-icon>
+          <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+          {{ isLoading ? 'Creating...' : 'Create Event' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="form-layout">
+      
+      <!-- Left Column - Form -->
+      <div class="form-column">
+        <form [formGroup]="createEventForm" class="event-form">
+          
+          <!-- Basic Information Card -->
+          <mat-card class="form-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>info</mat-icon>
+                Basic Information
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              
+              <!-- Event Name -->
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Event Name</mat-label>
+                  <input matInput 
+                         formControlName="name" 
+                         placeholder="Enter a catchy event name"
+                         maxlength="100">
+                  <mat-hint align="end">{{ name?.value?.length || 0 }}/100</mat-hint>
+                  <mat-error *ngIf="name?.invalid && name?.touched">
+                    {{ getErrorMessage('name') }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Description -->
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Event Description</mat-label>
+                  <textarea matInput 
+                            formControlName="description" 
+                            placeholder="Describe what makes your event special..."
+                            rows="4"
+                            maxlength="1000"></textarea>
+                  <mat-hint align="end">{{ description?.value?.length || 0 }}/1000</mat-hint>
+                  <mat-error *ngIf="description?.invalid && description?.touched">
+                    {{ getErrorMessage('description') }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Category -->
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Event Category</mat-label>
+                  <mat-select formControlName="category" placeholder="Choose a category">
+                    <mat-option *ngFor="let category of categories" [value]="category">
+                      <div class="category-option">
+                        <mat-icon>{{ getCategoryIcon(category) }}</mat-icon>
+                        <span>{{ category }}</span>
+                      </div>
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="category?.invalid && category?.touched">
+                    {{ getErrorMessage('category') }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Location & Timing Card -->
+          <mat-card class="form-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>place</mat-icon>
+                Location & Timing
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              
+              <!-- Venue -->
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Venue</mat-label>
+                  <input matInput 
+                         formControlName="venue" 
+                         placeholder="Where will your event take place?"
+                         maxlength="200">
+                  <mat-icon matSuffix>location_on</mat-icon>
+                  <mat-hint align="end">{{ venue?.value?.length || 0 }}/200</mat-hint>
+                  <mat-error *ngIf="venue?.invalid && venue?.touched">
+                    {{ getErrorMessage('venue') }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Date and Time Row -->
+              <div class="form-row two-columns">
+                <mat-form-field appearance="outline">
+                  <mat-label>Event Date</mat-label>
+                  <input matInput 
+                         [matDatepicker]="picker" 
+                         formControlName="date_time"
+                         [min]="minDate"
+                         placeholder="Select date">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  <mat-error *ngIf="date_time?.invalid && date_time?.touched">
+                    {{ getErrorMessage('date_time') }}
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Event Time</mat-label>
+                  <mat-select formControlName="time" placeholder="Select time">
+                    <mat-option *ngFor="let timeSlot of timeSlots" [value]="timeSlot.value">
+                      {{ timeSlot.display }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>access_time</mat-icon>
+                  <mat-error *ngIf="time?.invalid && time?.touched">
+                    {{ getErrorMessage('time') }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Pricing & Capacity Card -->
+          <mat-card class="form-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>confirmation_number</mat-icon>
+                Pricing & Capacity
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              
+              <div class="form-row two-columns">
+                <!-- Capacity -->
+                <mat-form-field appearance="outline">
+                  <mat-label>Maximum Capacity</mat-label>
+                  <input matInput 
+                         type="number" 
+                         formControlName="capacity"
+                         placeholder="100"
+                         min="1"
+                         max="10000">
+                  <mat-icon matSuffix>people</mat-icon>
+                  <mat-hint>Maximum attendees</mat-hint>
+                  <mat-error *ngIf="capacity?.invalid && capacity?.touched">
+                    {{ getErrorMessage('capacity') }}
+                  </mat-error>
+                </mat-form-field>
+
+                <!-- Ticket Price -->
+                <mat-form-field appearance="outline">
+                  <mat-label>Ticket Price</mat-label>
+                  <input matInput 
+                         type="number" 
+                         formControlName="ticket_price"
+                         placeholder="500"
+                         min="0"
+                         max="100000"
+                         step="10">
+                  <span matPrefix>₹&nbsp;</span>
+                  <mat-icon matSuffix>currency_rupee</mat-icon>
+                  <mat-hint>Price per ticket in Rupees</mat-hint>
+                  <mat-error *ngIf="ticket_price?.invalid && ticket_price?.touched">
+                    {{ getErrorMessage('ticket_price') }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Media Card -->
+          <mat-card class="form-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>image</mat-icon>
+                Event Media
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              
+              <!-- Upload Options -->
+              <div class="form-row">
+                <div class="upload-options">
+                  <div class="upload-tabs">
+                    <button type="button" 
+                            mat-stroked-button 
+                            [class.active]="uploadMethod === 'url'"
+                            (click)="setUploadMethod('url')"
+                            class="upload-tab">
+                      <mat-icon>link</mat-icon>
+                      Image URL
+                    </button>
+                    <button type="button" 
+                            mat-stroked-button 
+                            [class.active]="uploadMethod === 'file'"
+                            (click)="setUploadMethod('file')"
+                            class="upload-tab">
+                      <mat-icon>upload</mat-icon>
+                      Upload from Device
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Image URL Input -->
+              <div class="form-row" *ngIf="uploadMethod === 'url'">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Event Image URL</mat-label>
+                  <input matInput 
+                         formControlName="image_url" 
+                         placeholder="https://example.com/your-event-image.jpg"
+                         type="url">
+                  <mat-icon matSuffix>link</mat-icon>
+                  <mat-hint>Paste a direct link to your image (jpg, png, gif, webp)</mat-hint>
+                  <mat-error *ngIf="image_url?.invalid && image_url?.touched">
+                    {{ getErrorMessage('image_url') }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- File Upload -->
+              <div class="form-row" *ngIf="uploadMethod === 'file'">
+                <div class="file-upload-container">
+                  <input type="file" 
+                         #fileInput 
+                         accept="image/*"
+                         (change)="onFileSelected($event)"
+                         class="file-input"
+                         id="eventImageUpload">
+                  
+                  <div class="file-upload-area" 
+                       (click)="fileInput.click()"
+                       (dragover)="onDragOver($event)"
+                       (dragleave)="onDragLeave($event)"
+                       (drop)="onFileDrop($event)"
+                       [class.drag-over]="isDragOver"
+                       [class.has-file]="selectedFile">
+                    
+                    <div class="upload-content" *ngIf="!selectedFile && !uploadProgress">
+                      <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                      <h4>Choose an image or drag it here</h4>
+                      <p>Supports JPG, PNG, GIF, WebP up to 5MB</p>
+                      <button type="button" mat-raised-button color="primary" class="browse-btn">
+                        <mat-icon>folder_open</mat-icon>
+                        Browse Files
+                      </button>
+                    </div>
+
+                    <div class="file-preview" *ngIf="selectedFile && !uploadProgress">
+                      <div class="preview-image" [style.background-image]="'url(' + filePreviewUrl + ')'"></div>
+                      <div class="file-info">
+                        <h4>{{ selectedFile.name }}</h4>
+                        <p>{{ formatFileSize(selectedFile.size) }}</p>
+                        <div class="file-actions">
+                          <button type="button" mat-icon-button color="warn" (click)="removeFile()" matTooltip="Remove file">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                          <button type="button" mat-icon-button (click)="fileInput.click()" matTooltip="Change file">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="upload-progress" *ngIf="uploadProgress">
+                      <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+                      <p>Uploading... {{ uploadProgress }}%</p>
+                    </div>
+                  </div>
+
+                  <div class="upload-error" *ngIf="uploadError">
+                    <mat-icon>error</mat-icon>
+                    <span>{{ uploadError }}</span>
+                  </div>
+                </div>
+              </div>
+
+            </mat-card-content>
+          </mat-card>
+
+        </form>
+      </div>
+
+      <!-- Right Column - Preview -->
+      <div class="preview-column">
+        <div class="preview-sticky">
+          <mat-card class="preview-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>preview</mat-icon>
+                Live Preview
+              </mat-card-title>
+              <mat-card-subtitle>See how your event will look</mat-card-subtitle>
+            </mat-card-header>
+            
+            <mat-card-content>
+              <div class="event-preview">
+                
+                <!-- Event Image -->
+                <div class="preview-image-container">
+                  <div class="preview-image" 
+                       [class.has-image]="hasPreviewImage()"
+                       [style.background-image]="getPreviewImageUrl()">
+                    <div class="image-placeholder" *ngIf="!hasPreviewImage()">
+                      <mat-icon>image</mat-icon>
+                      <span>Event Image</span>
+                    </div>
+                    <div class="image-overlay" *ngIf="hasPreviewImage()">
+                      <div class="category-badge" *ngIf="createEventForm.value.category">
+                        <mat-icon>{{ getCategoryIcon(createEventForm.value.category) }}</mat-icon>
+                        {{ createEventForm.value.category }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Event Details -->
+                <div class="preview-content">
+                  <h2 class="preview-title">
+                    {{ createEventForm.value.name || 'Your Event Name' }}
+                  </h2>
+                  
+                  <p class="preview-description" *ngIf="createEventForm.value.description">
+                    {{ createEventForm.value.description }}
+                  </p>
+                  
+                  <div class="preview-details">
+                    <div class="detail-row" *ngIf="createEventForm.value.venue">
+                      <mat-icon>location_on</mat-icon>
+                      <span>{{ createEventForm.value.venue }}</span>
+                    </div>
+                    
+                    <div class="detail-row" *ngIf="createEventForm.value.date_time">
+                      <mat-icon>event</mat-icon>
+                      <span>{{ createEventForm.value.date_time | date:'fullDate' }}</span>
+                    </div>
+                    
+                    <div class="detail-row" *ngIf="createEventForm.value.time">
+                      <mat-icon>access_time</mat-icon>
+                      <span>{{ getTimeDisplay(createEventForm.value.time) }}</span>
+                    </div>
+                    
+                    <div class="detail-row" *ngIf="createEventForm.value.capacity">
+                      <mat-icon>people</mat-icon>
+                      <span>{{ createEventForm.value.capacity }} attendees</span>
+                    </div>
+                  </div>
+
+                  <!-- Price Section -->
+                  <div class="price-section" *ngIf="createEventForm.value.ticket_price !== null && createEventForm.value.ticket_price !== ''">
+                    <div class="price-label">Ticket Price</div>
+                    <div class="price-amount">₹{{ createEventForm.value.ticket_price | number:'1.0-0' }}</div>
+                  </div>
+
+                  <!-- Action Button Preview -->
+                  <div class="preview-actions">
+                    <button mat-raised-button color="primary" disabled class="preview-book-btn">
+                      <mat-icon>confirmation_number</mat-icon>
+                      Book Tickets
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
